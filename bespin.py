@@ -1,24 +1,28 @@
 #!/usr/local/bin/python3
 import argparse
 import sys
-import dahak_vpc
-import dahak_spy
+from dahak_vpc import DahakVPC
+from dahak_spy import DahakSpy
+from dahak_yeti import DahakYeti
+import long_strings 
 
-class Boto(object):
+class Bespin(object):
     """
     Hat tip:
     https://chase-seibert.github.io/blog/2014/03/21/python-multilevel-argparse.html
     """
     def __init__(self):
-        parser = argparse.ArgumentParser(
-            description='dahak-bespin uses boto3 to wrangle nodes in the cloud and run dahak workflows',
-            usage='''bespin <command> [<args>]
+        self.logo = long_strings.logo
+        print(self.logo)
 
-The most commonly used commands are:
-   vpc        Make a VPC for all the dahak nodes
-   spy        Make a spy monitoring node
-   yeti       Make a yeti worker node
-''')
+        self.hasVpc = False
+        self.hasSpy = False
+        self.hasYeti = False
+
+        parser = argparse.ArgumentParser(
+            description=long_strings.bespin_description,
+            usage=long_strings.bespin_usage)
+
         parser.add_argument('command', help='Subcommand to run')
 
         # parse_args defaults to [1:] for args, but you need to
@@ -32,45 +36,81 @@ The most commonly used commands are:
         # use dispatch pattern to invoke method with same name
         getattr(self, args.command)()
 
-    def example(self):
-        parser = argparse.ArgumentParser(description='Example command description')
 
-        # prefixing the argument with -- means it's optional
-        parser.add_argument('--optional', action='store_true')
-
-        # NOT prefixing the argument with -- means it's not optional
-        #parser.add_argument('mandatory')
-
-        # now that we're inside a subcommand, ignore the first
-        # TWO argvs, ie the command (git) and the subcommand (commit)
-        args = parser.parse_args(sys.argv[2:])
-        print('Running example, optional=%s' % args.amend)
-
-        #args = parser.parse_args(sys.argv[2:])
-        #print('Running example, mandatory=%s' % args.mandatory)
-
+    ####################################################
+    # VPC Commands
 
     def vpc(self):
-        parser = argparse.ArgumentParser(description='Make a VPC and a security group')
-        dahak_vpc.make()
+        """
+        Process subcommands related to the VPC
+        """
+        parser = argparse.ArgumentParser(description=long_strings.vpc_description,
+                            usage = long_strings.vpc_usage)
+
+        parser.add_argument('vpc_command')
+
+        # ignore first two argvs (command and subcommand)
+        args = parser.parse_args(sys.argv[2:])
+        print("Received vpc command %s"%(args.vpc_command))
+
+        # use dispatch pattern again, look for method named vpc_command
+        vpc_command = "vpc_"+args.vpc_command
+        if not hasattr(self, vpc_command):
+            print("Unrecognized VPC command")
+            parser.print_help()
+            exit(1)
+
+        # now invoke the method
+        getattr(self, vpc_command)()
+
+    def vpc_build(self):
+        """
+        Build the VPC
+        """
+        if(self.hasVpc):
+            raise Exception("A VPN already exists!")
+        else:
+            print("argparser: building vpc")
+
+    def vpc_destroy(self):
+        """
+        Destroy the VPC
+        """
+        if(self.hasVpc):
+            print("argparser: destroying vpc")
+        else:
+            raise Exception("No VPN exists! Try creating one with the command:\n\t\tbespin vpn create")
+
+    def vpc_info(self):
+        """
+        Get information about the VPC
+        """
+        if(self.hasVpc):
+            print("argparser: getting vpc info")
+        else:
+            raise Exception("No VPN exists.")
+
+    def vpc_stash(self):
+        """
+        Print the location of stash files 
+        for VPC info.
+        """
+        print("argparser: showing vpc stash")
+
+
+    ####################################################
+    # Node Commands
 
     def spy(self):
         parser = argparse.ArgumentParser(description='Make a spy monitoring node and add it to the VPC')
-        dahak_spy.make()
+        spy = DahakSpy()
+        spy.build()
 
     def yeti(self):
         parser = argparse.ArgumentParser(description='Make a yeti worker node and add it to the VPC')
-        dahak_yeti.make()
+        yeti = DahakYeti()
+        yeti.build()
 
-
-
-    def fetch(self):
-        parser = argparse.ArgumentParser(
-            description='Download objects and refs from another repository')
-        # NOT prefixing the argument with -- means it's not optional
-        parser.add_argument('repository')
-        args = parser.parse_args(sys.argv[2:])
-        print('Running git fetch, repository=%s' % args.repository)
 
 
 if __name__ == '__main__':
