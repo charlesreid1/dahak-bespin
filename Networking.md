@@ -110,6 +110,7 @@ They will all be assigned IP addresses of `10.X.0.*`.
 For example, 
 
 ```
+10.117.0.1          gateway
 10.117.0.100        spy 
 10.117.0.101        yeti #1
 10.117.0.102        yeti #2
