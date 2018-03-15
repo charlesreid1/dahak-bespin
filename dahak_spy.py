@@ -1,5 +1,6 @@
 from dahak_node import DahakNode
 
+
 """
 Dahak Spy
 
@@ -7,6 +8,7 @@ Create a spy node for logging and monitoring.
 
 Add it to the VPC.
 """
+
 
 class DahakSpy(DahakNode):
 

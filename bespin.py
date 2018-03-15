@@ -1,10 +1,11 @@
 #!/usr/local/bin/python3
 import argparse
-import sys
+import os, re, sys
 from dahak_vpc import DahakVPC
 from dahak_spy import DahakSpy
 from dahak_yeti import DahakYeti
 import long_strings 
+from random_labels import random_ip, random_label
 
 
 """
@@ -21,14 +22,21 @@ class Bespin(object):
     Hat tip:
     https://chase-seibert.github.io/blog/2014/03/21/python-multilevel-argparse.html
     """
+    # Stash files are where bespin stores information
+    # about resources it is supposed to be managing
+    vpc_stashfile      = ".vpc"
+    security_stashfile = ".security"
+    spy_stashfile      = ".spy"
+    yeti_stashfile     = ".yeti"
+
     def __init__(self):
         self.logo = long_strings.logo
         print(self.logo)
 
-        self.hasVpc = False
-        self.hasSecurityGroup = False
-        self.hasSpy = False
-        self.hasYeti = False
+        self.has_vpc = self.check_for_vpc()
+        self.has_security_group = self.check_for_security()
+        self.has_spy = self.check_for_spy()
+        self.has_yeti = self.check_for_yeti()
 
         parser = argparse.ArgumentParser(
             description = long_strings.bespin_description,
@@ -46,6 +54,70 @@ class Bespin(object):
 
         # use dispatch pattern to invoke method with same name
         getattr(self, args.command)()
+
+
+    ####################################################
+    # Utilities 
+
+    def confirm(self, msg):
+        """
+        Confirm with the user that the action 
+        we are about to take (described in msg)
+        is okay to carry out.
+        """
+        print(msg)
+        ui = input("Okay to proceed? (y/n): ")
+        if(ui.lower()!='y' and ui.lower()!='yes'):
+            print("Script will not proceed.")
+            exit()
+
+
+    def check_for_vpc(self):
+        """
+        Check for a vpc stash file.
+        If it is present, bespin is already managing a vpc.
+        """
+        if os.path.isfile(self.vpc_stashfile):
+            return True
+        else:
+            return False
+
+
+    def check_for_security(self):
+        """
+        Check for a security group stash file.
+        If it is present, bespin is already managing a security group.
+        """
+        if os.path.isfile(self.security_stashfile):
+            return True
+        else:
+            return False
+
+
+    def check_for_spy(self):
+        """
+        Check for a spy node stash file.
+        If it is present, bespin is already managing a spy node.
+        """
+        if os.path.isfile(self.spy_stashfile):
+            return True
+        else:
+            return False
+
+
+    def check_for_yeti(self):
+        """
+        Does bigfoot exist?
+
+        TODO: 
+        This one will need more care.
+        The user should be able to spawn new yeti nodes 
+        even if a yeti node already exists.
+        """
+        if os.path.isfile(self.yeti_stashfile):
+            return True
+        else:
+            return False
 
 
     ####################################################
@@ -85,17 +157,19 @@ class Bespin(object):
         """
         Build the VPC
         """
-        if(self.hasVpc):
+        if(self.has_vpc):
             raise Exception("A VPC already exists!")
         else:
             print("argparser: building vpc")
-
+            self.confirm("About to create a VPC and a subnet.")
+            vpc = DahakVPC()
+            vpc.build()
 
     def vpc_destroy(self):
         """
         Destroy the VPC
         """
-        if(self.hasVpc):
+        if(self.has_vpc):
             print("argparser: destroying vpc")
         else:
             raise Exception("No VPC exists! Try creating one with the command:\n\t\tbespin vpn create")
@@ -105,7 +179,7 @@ class Bespin(object):
         """
         Get information about the VPC
         """
-        if(self.hasVpc):
+        if(self.has_vpc):
             print("argparser: getting vpc info")
         else:
             raise Exception("No VPC exists.")
@@ -150,7 +224,7 @@ class Bespin(object):
         """
         Build the security group
         """
-        if(self.hasSecurityGroup):
+        if(self.has_security_group):
             raise Exception("A security group already exists!")
         else:
             print("argparser: building security group")
@@ -160,7 +234,7 @@ class Bespin(object):
         """
         Destroy the security group
         """
-        if(self.hasSecurityGroup):
+        if(self.has_security_group):
             print("argparser: destroying security group")
         else:
             raise Exception("No security group exists! Try creating one with the command:\n\t\tbespin security create")
@@ -170,7 +244,7 @@ class Bespin(object):
         """
         Get information about the security group
         """
-        if(self.hasSecurityGroup):
+        if(self.has_security_group):
             print("argparser: getting security group info")
         else:
             raise Exception("No security group exists.")
@@ -217,7 +291,7 @@ class Bespin(object):
         """
         Build the spy node
         """
-        if(self.hasSpy):
+        if(self.has_spy):
             raise Exception("A spy node already exists!")
         else:
             print("argparser: building spy node")
@@ -227,7 +301,7 @@ class Bespin(object):
         """
         Destroy the spy node
         """
-        if(self.hasSpy):
+        if(self.has_spy):
             print("argparser: destroying spy node")
         else:
             raise Exception("No spy node exists! Try creating one with the command:\n\t\tbespin spy create")
@@ -237,7 +311,7 @@ class Bespin(object):
         """
         Get information about the spy node
         """
-        if(self.hasSpy):
+        if(self.has_spy):
             print("argparser: getting spy node info")
         else:
             raise Exception("No spy node exists.")

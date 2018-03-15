@@ -1,4 +1,5 @@
 from dahak_aws import AWSObject
+from random_labels import random_label, random_ip
 
 import collections
 import string
@@ -13,13 +14,21 @@ Dahak VPC
 Create a single VPC with a single subnet,
 add an internet gateway, a routing table,
 and DHCP+DNS services.
+
+TODO:
+    - need to have two ways to construct a VPC
+    - method 1 - create a brand new VPC
+    - method 2 - load a VPC from a stash file
 """
 
 
 class DahakVPC(AWSObject):
 
     def __init__(self):
+        AWSObject.__init__(self)
         print("initializing dahak vpc")
+        self.base_ip = random_ip()
+        self.label = random_label()
 
     def build(self):
         print("building vpc...")
