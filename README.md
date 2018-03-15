@@ -34,4 +34,11 @@ the infrastructure needed to run (and test) dahak workflows.
 See [Networking.md](/Networking.md) for more about the networking 
 details. Short version: one network with one subnet.
 
+## Example Usage
+
+A typical session using bespin looks like this:
+
+```
+bespin help
+```
 
