@@ -1,0 +1,396 @@
+#!/usr/bin/env python
+import argparse
+import os, re, sys
+from dahak_vpc import DahakVPC
+from dahak_spy import DahakSpy
+from dahak_yeti import DahakYeti
+import long_strings 
+from random_labels import random_ip, random_label
+
+
+"""
+ ___   ____  __   ___   _   _     
+| |_) | |_  ( (` | |_) | | | |\ | 
+|_|_) |_|__ _)_) |_|   |_| |_| \| 
+
+cloud infrastructure tool for dahak
+"""
+
+
+class Bespin(object):
+    """
+    Hat tip:
+    https://chase-seibert.github.io/blog/2014/03/21/python-multilevel-argparse.html
+    """
+    # Stash files are where bespin stores information
+    # about resources it is supposed to be managing
+    vpc_stashfile      = ".vpc"
+    security_stashfile = ".security"
+    spy_stashfile      = ".spy"
+    yeti_stashfile     = ".yeti"
+
+    def __init__(self):
+        self.logo = long_strings.logo
+        print(self.logo)
+
+        self.has_vpc = self.check_for_vpc()
+        self.has_security_group = self.check_for_security()
+        self.has_spy = self.check_for_spy()
+        self.has_yeti = self.check_for_yeti()
+
+        parser = argparse.ArgumentParser(
+            description = long_strings.bespin_description,
+            usage = long_strings.bespin_usage)
+
+        parser.add_argument('command', help='Subcommand to run')
+
+        # parse_args defaults to [1:] for args, but you need to
+        # exclude the rest of the args too, or validation will fail
+        args = parser.parse_args(sys.argv[1:2])
+        if not hasattr(self, args.command):
+            print('Unrecognized command: %s\n'%(args.command))
+            parser.print_help()
+            exit(1)
+
+        # use dispatch pattern to invoke method with same name
+        getattr(self, args.command)()
+
+
+    ####################################################
+    # Utilities 
+
+    def confirm(self, msg):
+        """
+        Confirm with the user that the action 
+        we are about to take (described in msg)
+        is okay to carry out.
+        """
+        print(msg)
+        ui = input("Okay to proceed? (y/n): ")
+        if(ui.lower()!='y' and ui.lower()!='yes'):
+            print("Script will not proceed.")
+            exit()
+
+
+    def check_for_vpc(self):
+        """
+        Check for a vpc stash file.
+        If it is present, bespin is already managing a vpc.
+        """
+        if os.path.isfile(self.vpc_stashfile):
+            return True
+        else:
+            return False
+
+
+    def check_for_security(self):
+        """
+        Check for a security group stash file.
+        If it is present, bespin is already managing a security group.
+        """
+        if os.path.isfile(self.security_stashfile):
+            return True
+        else:
+            return False
+
+
+    def check_for_spy(self):
+        """
+        Check for a spy node stash file.
+        If it is present, bespin is already managing a spy node.
+        """
+        if os.path.isfile(self.spy_stashfile):
+            return True
+        else:
+            return False
+
+
+    def check_for_yeti(self):
+        """
+        Does bigfoot exist?
+
+        TODO: 
+        This one will need more care.
+        The user should be able to spawn new yeti nodes 
+        even if a yeti node already exists.
+        """
+        if os.path.isfile(self.yeti_stashfile):
+            return True
+        else:
+            return False
+
+
+    ####################################################
+    # VPC Commands
+
+    def vpc(self):
+        """
+        Process subcommands related to the VPC
+        """
+        parser = argparse.ArgumentParser(
+                description = long_strings.vpc_description,
+                usage = long_strings.vpc_usage)
+
+        parser.add_argument('vpc_command')
+
+        # ignore first two argvs (command and subcommand)
+        args = parser.parse_args(sys.argv[2:])
+        print("Received vpc command %s"%(args.vpc_command))
+
+        # offer to help
+        if(args.vpc_command=="help"):
+            parser.print_help()
+            exit(1)
+
+        # use dispatch pattern again, look for method named vpc_command
+        vpc_command = "vpc_"+args.vpc_command
+        if not hasattr(self, vpc_command):
+            print("Unrecognized VPC command: %s\n"%(args.vpc_command))
+            parser.print_help()
+            exit(1)
+
+        # now invoke the method
+        getattr(self, vpc_command)()
+
+
+    def vpc_build(self):
+        """
+        Build the VPC
+        """
+        if(self.has_vpc):
+            raise Exception("A VPC already exists!")
+        else:
+            print("argparser: building vpc")
+            self.confirm("About to create a VPC and a subnet.")
+            vpc = DahakVPC()
+            vpc.build()
+
+    def vpc_destroy(self):
+        """
+        Destroy the VPC
+        """
+        if(self.has_vpc):
+            print("argparser: destroying vpc")
+        else:
+            raise Exception("No VPC exists! Try creating one with the command:\n\t\tbespin vpn create")
+
+
+    def vpc_info(self):
+        """
+        Get information about the VPC
+        """
+        if(self.has_vpc):
+            print("argparser: getting vpc info")
+        else:
+            raise Exception("No VPC exists.")
+
+
+    def vpc_stash(self):
+        """
+        Print the location of stash files 
+        for VPC info.
+        """
+        print("argparser: showing vpc stash")
+
+
+    ####################################################
+    # Security Group Commands
+
+    def security(self):
+        """
+        Process subcommands related to the security group
+        """
+        parser = argparse.ArgumentParser(
+                description = long_strings.spy_description,
+                usage = long_strings.spy_usage)
+
+        parser.add_argument('security_command')
+
+        args = parser.parse_args(sys.argv[2:])
+        print("Received security command %s"%(args.security_command))
+
+        if(args.security_command=="help"):
+            parser.print_help()
+            exit(1)
+
+        security_command = "security_"+args.vpc_command
+        if not hasattr(self, security_command):
+            print("Unrecognized security command: %s\n"%(args.security_command))
+            parser.print_help()
+            exit(1)
+
+
+    def security_build(self):
+        """
+        Build the security group
+        """
+        if(self.has_security_group):
+            raise Exception("A security group already exists!")
+        else:
+            print("argparser: building security group")
+
+
+    def security_destroy(self):
+        """
+        Destroy the security group
+        """
+        if(self.has_security_group):
+            print("argparser: destroying security group")
+        else:
+            raise Exception("No security group exists! Try creating one with the command:\n\t\tbespin security create")
+
+
+    def security_info(self):
+        """
+        Get information about the security group
+        """
+        if(self.has_security_group):
+            print("argparser: getting security group info")
+        else:
+            raise Exception("No security group exists.")
+
+
+    def security_stash(self):
+        """
+        Print the location of stash files 
+        for security group info.
+        """
+        print("argparser: showing security group stash")
+
+
+    ####################################################
+    # Spy Node Commands
+
+    def spy(self):
+        """
+        Process subcommands related to spy
+        """
+        parser = argparse.ArgumentParser(
+                description = long_strings.spy_description,
+                usage = long_strings.spy_usage)
+
+        parser.add_argument('spy_command')
+
+        args = parser.parse_args(sys.argv[2:])
+        print("Received spy command %s"%(args.spy_command))
+
+        if(args.spy_command=="help"):
+            parser.print_help()
+            exit(1)
+
+        spy_command = "spy_"+args.spy_command
+        if not hasattr(self, spy_command):
+            print("Unrecognized spy command: %s\n"%(args.spy_command))
+            parser.print_help()
+            exit(1)
+
+        getattr(self, spy_command)()
+
+
+    def spy_build(self):
+        """
+        Build the spy node
+        """
+        if(self.has_spy):
+            raise Exception("A spy node already exists!")
+        else:
+            print("argparser: building spy node")
+
+
+    def spy_destroy(self):
+        """
+        Destroy the spy node
+        """
+        if(self.has_spy):
+            print("argparser: destroying spy node")
+        else:
+            raise Exception("No spy node exists! Try creating one with the command:\n\t\tbespin spy create")
+
+
+    def spy_info(self):
+        """
+        Get information about the spy node
+        """
+        if(self.has_spy):
+            print("argparser: getting spy node info")
+        else:
+            raise Exception("No spy node exists.")
+
+
+    def spy_stash(self):
+        """
+        Print the location of stash files 
+        for spy node info.
+        """
+        print("argparser: showing spy node stash")
+
+
+    ####################################################
+    # Yeti Node Commands
+
+    def yeti(self):
+        """
+        Process subcommands related to yeti node
+        """
+        parser = argparse.ArgumentParser(
+                description = long_strings.yeti_description,
+                usage = long_strings.vpc_usage)
+
+        parser.add_argument('yeti_command')
+
+        args = parser.parse_args(sys.argv[2:])
+        print("Received yeti command %s"%(args.yeti_command))
+
+        if(args.yeti_command=="help"):
+            parser.print_help()
+            exit(1)
+
+        yeti_command = "yeti_"+args.yeti_command
+        if not hasattr(self, yeti_command):
+            print("Unrecognized yeti command: %s\n"%(args.yeti_command))
+            parser.print_help()
+            exit(1)
+
+        getattr(self, yeti_command)()
+
+
+    def yeti_build(self):
+        """
+        Build the yeti node
+        """
+        if(self.hasyeti):
+            raise Exception("A yeti node already exists!")
+        else:
+            print("argparser: building yeti node")
+
+    def yeti_destroy(self):
+        """
+        Destroy the yeti node
+        """
+        if(self.hasyeti):
+            print("argparser: destroying yeti node")
+        else:
+            raise Exception("No yeti node exists! Try creating one with the command:\n\t\tbespin yeti create")
+
+
+    def yeti_info(self):
+        """
+        Get information about the yeti node
+        """
+        if(self.hasyeti):
+            print("argparser: getting yeti node info")
+        else:
+            raise Exception("No yeti node exists.")
+
+
+    def yeti_stash(self):
+        """
+        Print the location of stash files 
+        for yeti node info.
+        """
+        print("argparser: showing yeti node stash")
+
+
+if __name__ == '__main__':
+    Bespin()
+

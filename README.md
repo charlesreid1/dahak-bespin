@@ -23,7 +23,7 @@ for some help. Pass the `--help` flag
 or the `help` subcommand to bespin:
 
 ```
-$ bespin --help
+$ ./bespin --help
 
  ___   ____  __   ___   _   _
 | |_) | |_  ( (` | |_) | | | |\ |
@@ -61,7 +61,7 @@ bespin vpc info     # print info
 Here is the output of the first command:
 
 ```
-$ bespin vpc
+$ ./bespin vpc
  ___   ____  __   ___   _   _
 | |_) | |_  ( (` | |_) | | | |\ |
 |_|_) |_|__ _)_) |_|   |_| |_| \|
@@ -75,7 +75,7 @@ The vpc subcommands available are:
     vpc destroy         Tear down the VPC
     vpc info            Print info about the VPC
     vpc stash           Print location of VPC stash files
-bespin.py: error: the following arguments are required: vpc_command
+bespin: error: the following arguments are required: vpc_command
 ```
 
 Next, the user should modify the security group 
@@ -113,7 +113,7 @@ bespin spy info     # get info about spy node
 example output:
 
 ```
-$ bespin.py spy
+$ ./bespin spy
 
  ___   ____  __   ___   _   _
 | |_) | |_  ( (` | |_) | | | |\ |
@@ -128,7 +128,7 @@ The spy subcommands available are:
     spy destroy         Tear down the spy node
     spy info            Print info about the spy node
     spy stash           Print location of spy stash files
-bespin.py: error: the following arguments are required: spy_command
+bespin: error: the following arguments are required: spy_command
 ```
 
 Finally, we can deploy a yeti:
@@ -142,7 +142,7 @@ bespin yeti info    # get info about (all) yeti nodes
 Output from the yeti command:
 
 ```
-$ bespin yeti
+$ ./bespin yeti
  ___   ____  __   ___   _   _
 | |_) | |_  ( (` | |_) | | | |\ |
 |_|_) |_|__ _)_) |_|   |_| |_| \|
@@ -156,7 +156,7 @@ The vpc subcommands available are:
     vpc destroy         Tear down the VPC
     vpc info            Print info about the VPC
     vpc stash           Print location of VPC stash files
-bespin.py: error: the following arguments are required: yeti_command
+bespin: error: the following arguments are required: yeti_command
 ```
 
 ## How Bespin Works
