@@ -31,8 +31,6 @@ $ bespin --help
 
 cloud infrastructure tool for dahak
 
-Unrecognized command: help
-
 usage: bespin <command> [<args>]
 
 The most commonly used commands are:
