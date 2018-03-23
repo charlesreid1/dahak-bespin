@@ -167,6 +167,8 @@ class DahakVPC(AWSObject):
         Make the necessary api calls
         to destroy the vpc using boto
 
+        https://aws.amazon.com/premiumsupport/knowledge-center/troubleshoot-dependency-error-delete-vpc/
+
         If you delete your Amazon VPC using the Amazon VPC console, 
         all its components--such as subnets, security groups, network 
         ACLs, route tables, internet gateways, VPC peering connections,
@@ -186,9 +188,4 @@ class DahakVPC(AWSObject):
         print(response)
 
         subprocess.call(['rm','-f',self.stashfile])
-
-
-
-
-
 
