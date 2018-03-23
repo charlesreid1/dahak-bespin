@@ -101,6 +101,10 @@ html_static_path = ['_static']
 #
 # html_sidebars = {}
 
+html_context = {
+   "github_project" : 'dahak-bespin',
+}
+
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
