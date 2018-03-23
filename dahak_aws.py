@@ -18,10 +18,6 @@ class AWSObject(object):
     def __init__(self):
         print("initializing aws object")
         self.session = boto3.Session(region_name="us-west-1")
-
-        #self.ec2 = s.resource('ec2') # high level interface
-        #self.ec2c = s.client('ec2') # low level interface
-
-        self.resource = session.resource('ec2') # high level interface
-        self.client = session.client('ec2') # low level interface
+        self.resource = self.session.resource('ec2') # high level interface
+        self.client = self.session.client('ec2') # low level interface
 

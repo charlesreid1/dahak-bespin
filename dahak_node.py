@@ -8,6 +8,12 @@ from botocore.exceptions import ClientError
 from pprint import pprint
 from datetime import datetime
 
+"""
+Dahak Node Base Class
+
+Defines behavior inherited by DahakSpy and DahakYeti.
+"""
+
 class DahakNode(object):
 
     def __init__(self,name):
