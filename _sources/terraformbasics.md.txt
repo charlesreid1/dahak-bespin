@@ -5,7 +5,7 @@ which is the tool we will use to
 automate the deployment of infrastructure
 to run dahak workflows.
 
-## Installing terraform
+## Installing Terraform
 
 [terraform binary - link](https://www.terraform.io/downloads.html)
 
@@ -15,7 +15,7 @@ On a Mac:
 brew install terraform
 ```
 
-## How it works
+## How Terraform Works 
 
 terraform is independent of the particular cloud platform,
 but in this example we'll show how to use AWS.
