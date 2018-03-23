@@ -1,10 +1,22 @@
-.. bespin documentation master file, created by
-   sphinx-quickstart on Fri Mar 23 00:08:44 2018.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. _index:
 
+================
 dahak-bespin
 ================
+
+dahak-bespin is a framework for allocating 
+cloud infrastructure to run dahak workflows.
+
+* See source code at `charlesreid1/dahak-bespin on github
+  <https://github.com/charlesreid1/dahak-bespin>`_.
+
+* Sphinx documentation hosted at `charlesreid1.github.io/dahak-bespin
+  <https://charlesreid1.github.io/dahak-bespin>`_.
+
+* This package uses `terraform <https://www.terraform.io/>`_.
+
+Using Bespin via Terraform
+===========================
 
 .. toctree::
    :maxdepth: 2
