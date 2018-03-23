@@ -1,0 +1,203 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Terraform Basics &#8212; bespin  documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Welcome to bespin’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="terraform-basics">
+<span id="terraform-basics"></span><h1>Terraform Basics<a class="headerlink" href="#terraform-basics" title="Permalink to this headline">¶</a></h1>
+<p>This covers the basics of terraform,
+which is the tool we will use to
+automate the deployment of infrastructure
+to run dahak workflows.</p>
+<div class="section" id="installing-terraform">
+<span id="installing-terraform"></span><h2>Installing terraform<a class="headerlink" href="#installing-terraform" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://www.terraform.io/downloads.html">terraform binary - link</a></p>
+<p>On a Mac:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">brew</span> <span class="n">install</span> <span class="n">terraform</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-it-works">
+<span id="how-it-works"></span><h2>How it works<a class="headerlink" href="#how-it-works" title="Permalink to this headline">¶</a></h2>
+<p>terraform is independent of the particular cloud platform,
+but in this example we’ll show how to use AWS.</p>
+<div class="section" id="configure-terraform">
+<span id="configure-terraform"></span><h3>Configure terraform<a class="headerlink" href="#configure-terraform" title="Permalink to this headline">¶</a></h3>
+<p>We define infrastructure with a config file,
+with file extension <code class="docutils literal notranslate"><span class="pre">.tf</span></code>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">example.tf</span></code></p>
+<p>If we leave out the AWS access and secret key,
+terraform will look in <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>
+of the machine running terraform
+(the one launching jobs).</p>
+<p>This requires setup beforehand
+(with boto or aws-cli).</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">example.tf:</span></code></strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">provider</span> <span class="s2">&quot;aws&quot;</span> <span class="p">{</span>
+  <span class="n">region</span>     <span class="o">=</span> <span class="s2">&quot;us-west-1a&quot;</span>
+<span class="p">}</span>
+
+<span class="n">resource</span> <span class="s2">&quot;aws_instance&quot;</span> <span class="s2">&quot;example&quot;</span> <span class="p">{</span>
+  <span class="n">ami</span>           <span class="o">=</span> <span class="s2">&quot;ami-2757f631&quot;</span>
+  <span class="n">instance_type</span> <span class="o">=</span> <span class="s2">&quot;t2.micro&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="initializing-terraform">
+<span id="initializing-terraform"></span><h3>Initializing terraform<a class="headerlink" href="#initializing-terraform" title="Permalink to this headline">¶</a></h3>
+<p>Start by initializing terraform
+and preparing it to run in your
+current directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ terraform init
+</pre></div>
+</div>
+</div>
+<div class="section" id="requesting-resources">
+<span id="requesting-resources"></span><h3>Requesting resources<a class="headerlink" href="#requesting-resources" title="Permalink to this headline">¶</a></h3>
+<p>Now, request the resources that are
+specified in the <code class="docutils literal notranslate"><span class="pre">.tf</span></code> file
+(there should only be ONE <code class="docutils literal notranslate"><span class="pre">.tf</span></code> file):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ terraform apply
+</pre></div>
+</div>
+<p>This will examine the resources
+inside the <code class="docutils literal notranslate"><span class="pre">.tf</span></code> file and compare to
+the current resources deployed,
+and will create a plan for what needs
+to be implemented or changed.</p>
+<p>If the execution plan is successfully created,
+terraform will print it and await confirmation.</p>
+<p>Type <code class="docutils literal notranslate"><span class="pre">yes</span></code> to proceed.</p>
+</div>
+<div class="section" id="inspect-resources">
+<span id="inspect-resources"></span><h3>Inspect resources<a class="headerlink" href="#inspect-resources" title="Permalink to this headline">¶</a></h3>
+<p>Insepct the current state of
+the assets with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ terraform show
+</pre></div>
+</div>
+</div>
+<div class="section" id="updating-resources">
+<span id="updating-resources"></span><h3>Updating resources<a class="headerlink" href="#updating-resources" title="Permalink to this headline">¶</a></h3>
+<p>If you want to update the infrastructure
+that terraform is deploying and managing,
+you can just update the <code class="docutils literal notranslate"><span class="pre">.tf</span></code> file,
+and run the apply command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ terraform apply
+</pre></div>
+</div>
+<p>As mentioned, terraform will examine
+the currently deployed resources and
+compare them to the resources listed
+in the terraform file, and come up with
+an execution plan.</p>
+</div>
+<div class="section" id="destroying-resources">
+<span id="destroying-resources"></span><h3>Destroying resources<a class="headerlink" href="#destroying-resources" title="Permalink to this headline">¶</a></h3>
+<p>Once you are ready to get rid of the resources,
+use the destroy command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ terraform destroy
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Terraform Basics</a><ul>
+<li><a class="reference internal" href="#installing-terraform">Installing terraform</a></li>
+<li><a class="reference internal" href="#how-it-works">How it works</a><ul>
+<li><a class="reference internal" href="#configure-terraform">Configure terraform</a></li>
+<li><a class="reference internal" href="#initializing-terraform">Initializing terraform</a></li>
+<li><a class="reference internal" href="#requesting-resources">Requesting resources</a></li>
+<li><a class="reference internal" href="#inspect-resources">Inspect resources</a></li>
+<li><a class="reference internal" href="#updating-resources">Updating resources</a></li>
+<li><a class="reference internal" href="#destroying-resources">Destroying resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to bespin’s documentation!</a></li>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/terraformbasics.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, charles reid.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.2</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/terraformbasics.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
