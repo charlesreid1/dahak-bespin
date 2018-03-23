@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import argparse
+import subprocess
 import os, re, sys
 from dahak_vpc import DahakVPC
 from dahak_spy import DahakSpy
@@ -123,6 +124,10 @@ class Bespin(object):
     ####################################################
     # VPC Commands
 
+    # Fix this: 
+    # vpc creates a vpc parser object
+    # and hands off all remaining args
+
     def vpc(self):
         """
         Process subcommands related to the VPC
@@ -157,20 +162,23 @@ class Bespin(object):
         """
         Build the VPC
         """
-        if(self.has_vpc):
-            raise Exception("A VPC already exists!")
+        if(os.path.exists(self.vpc_stashfile)):
+            raise Exception("A VPC (stashfile) already exists!")
         else:
             print("argparser: building vpc")
             self.confirm("About to create a VPC and a subnet.")
-            vpc = DahakVPC()
+            vpc = DahakVPC(self.vpc_stashfile)
             vpc.build()
+
 
     def vpc_destroy(self):
         """
         Destroy the VPC
         """
-        if(self.has_vpc):
+        if(os.path.exists(self.vpc_stashfile)):
             print("argparser: destroying vpc")
+            vpc = DahakVPC(self.vpc_stashfile)
+            vpc.destroy()
         else:
             raise Exception("No VPC exists! Try creating one with the command:\n\t\tbespin vpn create")
 
@@ -179,8 +187,9 @@ class Bespin(object):
         """
         Get information about the VPC
         """
-        if(self.has_vpc):
+        if(os.path.exists(self.vpc_stashfile)):
             print("argparser: getting vpc info")
+            subprocess.call(['cat',self.vpc_stashfile])
         else:
             raise Exception("No VPC exists.")
 
@@ -190,7 +199,8 @@ class Bespin(object):
         Print the location of stash files 
         for VPC info.
         """
-        print("argparser: showing vpc stash")
+        print("argparser: showing vpc stashfile location")
+        print(self.vpc_stashfile)
 
 
     ####################################################
