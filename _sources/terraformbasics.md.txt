@@ -114,3 +114,61 @@ use the destroy command:
 $ terraform destroy
 ```
 
+## Using Variables in Terraform
+
+### Input Variables 
+
+You can define input variables in a file `variables.tf`
+and use them to set up infrastructure.
+
+**`variables.tf`:**
+
+```
+variable "region" {
+  default = "us-west-1"
+}
+```
+
+Now you can use this variable by 
+inserting the expression `${var.region}`:
+
+```
+provider "aws" {
+  region     = "${var.region}"
+}
+```
+
+This can also be set on the command line:
+
+```
+$ terraform apply \
+  -var 'region=us-east-1'
+```
+
+If you name the varfile something other than `.tf`,
+use the `-var-file` command line argument:
+
+```
+$ terraform apply \
+  -var-file="production.tfvars"
+```
+
+### Output Variables 
+
+Output variables are defined in
+terraform `.tf` files using `output`:
+
+```
+output "ip" {
+  value = "${aws_instance.example.public_ip}"
+}
+```
+
+To see the value, check the output of `terraform apply`
+or run:
+
+```
+$ terraform output ip
+```
+
+

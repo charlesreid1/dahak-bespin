@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Running Dahak Workflows &#8212; bespin  documentation</title>
+    <title>Running Dahak Workflows &#8212; dahak-bespin  documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -24,55 +24,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head><body>
-  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body" role="main">
-            
-  <div class="section" id="running-dahak-workflows">
-<span id="running-dahak-workflows"></span><h1>Running Dahak Workflows<a class="headerlink" href="#running-dahak-workflows" title="Permalink to this headline">¶</a></h1>
-<p>To run dahak workflows,
-we use the following architecture:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-<span class="o">+------------------------------------------------------------+</span>
-<span class="o">|</span>    <span class="n">AWS</span>                                                     <span class="o">|</span>
-<span class="o">|</span>                                                            <span class="o">|</span>
-<span class="o">|</span>   <span class="o">+----------------------------------------------------+</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>      <span class="n">AWS</span> <span class="n">VPC</span>                                       <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>                                                    <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">+------------+</span>          <span class="o">+-----------------+</span>       <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span> <span class="n">yeti1</span>           <span class="o">|</span>       <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span> <span class="n">spy</span>        <span class="o">|</span>          <span class="o">|</span>  <span class="o">+-----------------+</span>    <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span> <span class="n">yeti2</span>        <span class="o">|</span>  <span class="o">|</span>    <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span>   <span class="o">+---------------+</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>  <span class="n">yeti3</span>   <span class="o">|</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span> <span class="o">&lt;--------+</span>  <span class="o">|</span>   <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span> <span class="o">&lt;-----------+</span>   <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span> <span class="o">&lt;---------------+</span>          <span class="o">|</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>  <span class="o">+------------+</span>          <span class="o">+-----------------+</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>                             <span class="o">|</span>   <span class="o">|</span>             <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>                             <span class="o">+-----------------+</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>                                 <span class="o">|</span>               <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>                                 <span class="o">+---------------+</span>  <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>                                                    <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">|</span>                                                    <span class="o">|</span>   <span class="o">|</span>
-<span class="o">|</span>   <span class="o">+----------------------------------------------------+</span>   <span class="o">|</span>
-<span class="o">|</span>                                                            <span class="o">|</span>
-<span class="o">+------------------------------------------------------------+</span>
-</pre></div>
-</div>
-</div>
-
-
-          </div>
-        </div>
-      </div>
+  <div class="document">
+    
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper"><div class="relations">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Running Dahak Workflows</a><ul>
+<li><a class="reference internal" href="#dahak-infrastructure">Dahak Infrastructure</a></li>
+<li><a class="reference internal" href="#dahak-terraform-files">Dahak Terraform Files</a><ul>
+<li><a class="reference internal" href="#vpc">VPC</a></li>
+<li><a class="reference internal" href="#spy-node">Spy Node</a></li>
+<li><a class="reference internal" href="#yeti-node">Yeti Node</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
@@ -102,10 +71,79 @@ we use the following architecture:</p>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
-      <div class="clearer"></div>
-    </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="running-dahak-workflows">
+<span id="running-dahak-workflows"></span><h1>Running Dahak Workflows<a class="headerlink" href="#running-dahak-workflows" title="Permalink to this headline">¶</a></h1>
+<p>To run dahak workflows,
+we use the following architecture:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
+<span class="o">+------------------------------------------------------------+</span>
+<span class="o">|</span>    <span class="n">AWS</span>                                                     <span class="o">|</span>
+<span class="o">|</span>                                                            <span class="o">|</span>
+<span class="o">|</span>   <span class="o">+----------------------------------------------------+</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>      <span class="n">AWS</span> <span class="n">VPC</span>                                       <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>                                                    <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>  <span class="o">+------------+</span>          <span class="o">+-----------------+</span>       <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span> <span class="n">yeti1</span>           <span class="o">|</span>       <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span> <span class="n">spy</span>        <span class="o">|</span>          <span class="o">|</span>  <span class="o">+-----------------+</span>    <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span> <span class="n">yeti2</span>        <span class="o">|</span>  <span class="o">|</span>    <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span>   <span class="o">+---------------+</span>  <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>  <span class="n">yeti3</span>   <span class="o">|</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span> <span class="o">&lt;--------+</span>  <span class="o">|</span>   <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span> <span class="o">&lt;-----------+</span>   <span class="o">|</span>          <span class="o">|</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>  <span class="o">|</span>            <span class="o">|</span> <span class="o">&lt;---------------+</span>          <span class="o">|</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>  <span class="o">+------------+</span>          <span class="o">+--|---|----------+</span>  <span class="o">|</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>                             <span class="o">+---|-------------+</span> <span class="o">|</span>  <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>                                 <span class="o">+---------------+</span>  <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">|</span>                                                    <span class="o">|</span>   <span class="o">|</span>
+<span class="o">|</span>   <span class="o">+----------------------------------------------------+</span>   <span class="o">|</span>
+<span class="o">|</span>                                                            <span class="o">|</span>
+<span class="o">+------------------------------------------------------------+</span>
+</pre></div>
+</div>
+<div class="section" id="dahak-infrastructure">
+<span id="dahak-infrastructure"></span><h2>Dahak Infrastructure<a class="headerlink" href="#dahak-infrastructure" title="Permalink to this headline">¶</a></h2>
+<p>Dahak workflows will require:</p>
+<ul class="simple">
+<li>VPC to connect nodes</li>
+<li>1 spy node to monitor and log</li>
+<li>1+ yeti nodes to run workflows</li>
+</ul>
+</div>
+<div class="section" id="dahak-terraform-files">
+<span id="dahak-terraform-files"></span><h2>Dahak Terraform Files<a class="headerlink" href="#dahak-terraform-files" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="vpc">
+<span id="vpc"></span><h3>VPC<a class="headerlink" href="#vpc" title="Permalink to this headline">¶</a></h3>
+<p>The VPC will allocate an IP address space 10.X.0.0/16.</p>
+<p>The VPC subnet will allocate an IP address space 10.X.0.0/24.</p>
+<p>The VPC will require AWS-provided DNS/DHCP.</p>
+<p>The VPC will require an internet gateway.</p>
+<p>The VPC will require a routing table pointing to the gateway.</p>
+</div>
+<div class="section" id="spy-node">
+<span id="spy-node"></span><h3>Spy Node<a class="headerlink" href="#spy-node" title="Permalink to this headline">¶</a></h3>
+<p>The spy node will need to run the cloud init scripts
+contained in <a class="reference external" href="https://github.com/charlesreid1/dahak-spy">dahak-spy</a>.</p>
+</div>
+<div class="section" id="yeti-node">
+<span id="yeti-node"></span><h3>Yeti Node<a class="headerlink" href="#yeti-node" title="Permalink to this headline">¶</a></h3>
+<p>The spy node will need to run the cloud init scripts
+contained in <a class="reference external" href="https://github.com/charlesreid1/dahak-yeti">dahak-yeti</a>.</p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
     <div class="footer">
-      &copy;2018, charles reid.
+      &copy;2018.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.2</a>
@@ -116,6 +154,10 @@ we use the following architecture:</p>
           rel="nofollow">Page source</a>
     </div>
 
+    
+    <a href="https://github.com/charlesreid1/dahak-bespin" class="github">
+        <img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub"  class="github"/>
+    </a>
     
 
     

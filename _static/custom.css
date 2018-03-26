@@ -1,1 +1,6 @@
-/* This file intentionally left blank. */
+body {
+    background-color: #efefef;
+}
+div.body {
+    background-color: #efefef;
+}
