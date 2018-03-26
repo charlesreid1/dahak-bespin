@@ -19,9 +19,9 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'bespin'
-copyright = '2018, charles reid'
-author = 'charles reid'
+project = 'dahak-bespin'
+copyright = '2018'
+author = 'DIB Lab'
 
 # The short X.Y version
 version = ''
@@ -47,8 +47,6 @@ extensions = [
 templates_path = ['_templates']
 
 # The suffix(es) of source filenames.
-# You can specify multiple suffix as a list of string:
-#
 source_parsers = {
    '.md': 'recommonmark.parser.CommonMarkParser'
 }
@@ -86,6 +84,20 @@ html_theme = 'alabaster'
 #
 # html_theme_options = {}
 
+# wow:
+# https://alabaster.readthedocs.io/en/latest/customization.html
+
+html_theme_options = {
+    'github_user': 'charlesreid1',
+    'github_repo': 'dahak-bespin',
+    'github_button' : 'true',
+    #'analytics_id' : '???',
+    'fixed_sidebar' : 'true',
+    'github_banner' : 'true',
+    'pre_bg'        : '#fff'
+}
+
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
@@ -102,14 +114,15 @@ html_static_path = ['_static']
 # html_sidebars = {}
 
 html_context = {
-   "github_project" : 'dahak-bespin',
+#   "google_analytics_id" : 'UA-00000000-1',
+   "github_base_account" : 'charlesreid1',
+   "github_project" : 'dahak-taco',
 }
-
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'bespindoc'
+htmlhelp_basename = 'dahak-bespindoc'
 
 
 # -- Options for LaTeX output ------------------------------------------------
@@ -136,7 +149,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'bespin.tex', 'bespin Documentation',
+    (master_doc, 'dahak-bespin.tex', 'bespin Documentation',
      'charles reid', 'manual'),
 ]
 
@@ -146,7 +159,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'bespin', 'bespin Documentation',
+    (master_doc, 'dahak-bespin', 'dahak-bespin Documentation',
      [author], 1)
 ]
 
@@ -157,8 +170,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'bespin', 'bespin Documentation',
-     author, 'bespin', 'One line description of project.',
+    (master_doc, 'dahak-bespin', 'dahak-bespin Documentation',
+     author, 'dahak-bespin', 'One line description of project.',
      'Miscellaneous'),
 ]
 
