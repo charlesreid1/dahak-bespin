@@ -177,3 +177,7 @@ texinfo_documents = [
 
 
 # -- Extension configuration -------------------------------------------------
+
+def setup(app):
+    app.add_stylesheet('bootstrap.min.css')
+
