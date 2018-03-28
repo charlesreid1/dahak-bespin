@@ -30,19 +30,19 @@ module "spy_server" {
   # to a specific version of the modules, such as the following example:
   source = "git::git@github.com:hashicorp/terraform-aws-consul.git/modules/consul-cluster?ref=v0.0.1"
 
-  cluster_name  = "${var.cluster_name}-server"
-  cluster_size  = "${var.num_servers}"
-  instance_type = "t2.micro"
+  cluster_name  = "${var.cluster_name}-spy"
+  cluster_size  = "1"
+  instance_type = "${var.spy_instance_type}"
   spot_price    = "${var.spot_price}"
 
-  # The EC2 Instances will use these tags to automatically discover each other and form a cluster
-  cluster_tag_key   = "${var.cluster_tag_key}"
-  cluster_tag_value = "${var.cluster_name}"
+  ### # The EC2 Instances will use these tags to automatically discover each other and form a cluster
+  ### cluster_tag_key   = "${var.cluster_tag_key}"
+  ### cluster_tag_value = "${var.cluster_name}"
 
   ami_id    = "${var.ami_id}"
-  user_data = "${data.template_file.user_data_server.rendered}"
+  user_data = "${data.template_file.spy_user_data.rendered}"
 
-  vpc_id     = "${data.aws_vpc.default.id}"
+  vpc_id     = "${data.aws_vpc.dahakvpc.id}"
   subnet_ids = "${data.aws_subnet_ids.default.ids}"
 
   # To make testing easier, we allow Consul and SSH requests from any IP address here but in a production
@@ -68,14 +68,13 @@ module "spy_server" {
 # (apt-get scripts, Python, docker, 
 # containers, etc.) to spy.
 
-data "template_file" "user_data_server" {
-  # FIXME
-  template = "${file("${path.module}/examples/root-example/user-data-server.sh")}"
+data "template_file" "spy_user_data" {
+  template = "${file("${path.module}/dahak-spy/cloud_init/cloud_init.sh")}"
 
-  vars {
-    cluster_tag_key   = "${var.cluster_tag_key}"
-    cluster_tag_value = "${var.cluster_name}"
-  }
+  ### vars {
+  ###   cluster_tag_key   = "${var.cluster_tag_key}"
+  ###   cluster_tag_value = "${var.cluster_name}"
+  ### }
 }
 
 
@@ -90,18 +89,18 @@ module "yeti_server" {
   source = "git::git@github.com:hashicorp/terraform-aws-consul.git/modules/consul-cluster?ref=v0.0.1"
 
   cluster_name  = "${var.cluster_name}-server"
-  cluster_size  = "${var.num_servers}"
-  instance_type = "m5.4xlarge"
+  cluster_size  = "${var.num_yeti_servers}"
+  instance_type = "${var.yeti_instance_type}"
   spot_price    = "${var.spot_price}"
 
-  # The EC2 Instances will use these tags to automatically discover each other and form a cluster
-  cluster_tag_key   = "${var.cluster_tag_key}"
-  cluster_tag_value = "${var.cluster_name}"
+  ### # The EC2 Instances will use these tags to automatically discover each other and form a cluster
+  ### cluster_tag_key   = "${var.cluster_tag_key}"
+  ### cluster_tag_value = "${var.cluster_name}"
 
   ami_id    = "${var.ami_id}"
-  user_data = "${data.template_file.user_data_server.rendered}"
+  user_data = "${data.template_file.yeti_user_data.rendered}"
 
-  vpc_id     = "${data.aws_vpc.default.id}"
+  vpc_id     = "${data.aws_vpc.dahakvpc.id}"
   subnet_ids = "${data.aws_subnet_ids.default.ids}"
 
   # To make testing easier, we allow Consul and SSH requests from any IP address here but in a production
@@ -127,14 +126,66 @@ module "yeti_server" {
 # (apt-get scripts, Python, snakemake, 
 # singularity, etc.) to yeti.
 
-data "template_file" "user_data_server" {
-  # FIXME
-  template = "${file("${path.module}/examples/root-example/user-data-server.sh")}"
+data "template_file" "yeti_user_data" {
+  template = "${file("${path.module}/dahak-yeti/cloud_init/cloud_init.sh")}"
 
-  vars {
-    cluster_tag_key   = "${var.cluster_tag_key}"
-    cluster_tag_value = "${var.cluster_name}"
+  ### vars {
+  ###   cluster_tag_key   = "${var.cluster_tag_key}"
+  ###   cluster_tag_value = "${var.cluster_name}"
+  ### }
+}
+
+# ============================
+# Deploy VPC
+# ============================
+# Assemble the VPC, subnet,
+# internet gateway, DNS, DHCP,
+
+# VPC
+resource "aws_vpc" "dahakvpc" {
+  cidr_block = "10.99.0.0/16"
+  enable_dns_support = true
+  enable_dns_hostnames = true
+}
+
+# VPC subnet
+resource "aws_subnet" "dahaksubnet" {
+  vpc_id     = "${aws_vpc.dahakvpc.id}"
+  cidr_block = "10.99.0.0/24"
+  map_public_ip_on_launch = true
+  availability_zone = "us-west-1a"
+  tags {
+    Name = "namedahaksubnet"
   }
 }
 
+# Internet gateway
+resource "aws_internet_gateway" "dahakgw" {
+  vpc_id = "${aws_vpc.dahakvpc.id}"
+  tags {
+    Name = "namedahakgw"
+  }
+}
+
+# Route
+resource "aws_route" "internet_access" {
+  route_table_id         = "${aws_vpc.dahakvpc.main_route_table_id}"
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = "${aws_internet_gateway.dahakgw.id}"
+}
+
+# Route table
+resource "aws_route_table" "private_route_table" {
+    vpc_id = "${aws_vpc.dahakvpc.id}"
+    tags {
+        Name = "Private route table"
+    }
+}
+
+# Associate route table with subnet
+# and routing table.
+resource "aws_route_table_association" "dahaksubnet_association" {
+    subnet_id = "${aws_subnet.dahaksubnet.id}"
+    route_table_id = "${aws_vpc.dahakvpc.main_route_table_id}"
+}
 
