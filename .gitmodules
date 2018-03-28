@@ -1,6 +1,3 @@
 [submodule "dahak-spy"]
 	path = dahak-spy
 	url = git@github.com:charlesreid1/dahak-spy.git
-[submodule "dahak-yeti"]
-	path = dahak-yeti
-	url = git@github.com:charlesreid1/dahak-yeti.git
