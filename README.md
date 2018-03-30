@@ -10,8 +10,8 @@ Inspiration: [terraform-aws-consul](https://github.com/hashicorp/terraform-aws-c
 
 Terraform module organization:
 
-* root: This folder shows an example of Terraform code that uses the consul-cluster module to deploy a Consul cluster in AWS.
-* modules: This folder contains the reusable code for this Module, broken down into one or more modules.
-* examples: This folder contains examples of how to use the modules.
-* test: Automated tests for the modules and examples.
+* root: This folder shows an example of Terraform code that uses a terraform module to deploy a cluster in AWS.
+* module: This folder contains the reusable code for this Module
+* examples: This folder contains examples of how to use the module.
+* test: Automated tests for the module and examples.
 
