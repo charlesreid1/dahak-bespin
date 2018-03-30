@@ -1,5 +1,8 @@
 # TODO:
 # - vpc?
+#
+# Note:
+# - it is the source directive that links the module code with the module block
 # 
 # ============================
 # Dahak Workflows Cluster
@@ -28,7 +31,8 @@ terraform {
 module "spy_server" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
   # to a specific version of the modules, such as the following example:
-  source = "git::git@github.com:hashicorp/terraform-aws-consul.git/modules/consul-cluster?ref=v0.0.1"
+  #source = "git::git@github.com:hashicorp/terraform-aws-consul.git/modules/consul-cluster?ref=v0.0.1"
+  source = "./module"
 
   cluster_name  = "${var.cluster_name}-spy"
   cluster_size  = "1"
@@ -86,7 +90,8 @@ data "template_file" "spy_user_data" {
 module "yeti_server" {
   # When using these modules in your own templates, you will need to use a Git URL with a ref attribute that pins you
   # to a specific version of the modules, such as the following example:
-  source = "git::git@github.com:hashicorp/terraform-aws-consul.git/modules/consul-cluster?ref=v0.0.1"
+  #source = "git::git@github.com:hashicorp/terraform-aws-consul.git/modules/consul-cluster?ref=v0.0.1"
+  source = "./module"
 
   cluster_name  = "${var.cluster_name}-server"
   cluster_size  = "${var.num_yeti_servers}"
